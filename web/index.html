@@ -1,0 +1,178 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8">
+  <title>CodePen - Keyboard with counts</title>
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/meyer-reset/2.0/reset.min.css">
+  <link rel="stylesheet" href="./style.css">
+  <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=VT323">
+
+
+</head>
+
+<body>
+  <div id="scoreboard_containter">
+    <div id="timer_container">
+      <div id="timer">20:00</div>
+    </div>
+    <br>
+    <div class="score_container" style="display: None;">
+      <div id="timed_score_titling">20 MIN SCORE</div>
+      <div id="timed_score">0</div>
+      <br>
+    </div>
+    <div class="score_container">
+      <div id="score_titling">SCORE</div>
+      <div id="score">0</div>
+    </div>
+  </div>
+  <!-- partial:index.partial.html -->
+  <div id="player_entry_text_container">
+    <div id="player_entry_text_display">
+
+    </div>
+    <!-- the text input carat we want to appear to blink, 
+  doesn't work with line carries in the text display div yet -->
+
+    <!-- <div>|</div> -->
+
+  </div>
+
+  <div id="keyboard_container">
+    <div id="start_button_container">
+      <div id="start-button" class="start-button">START</div>
+    </div>
+    <div class="keyboard">
+      <ul class="row row-1">
+        <!--     <li class="pinky" id="tab">TAB</li> -->
+        <li class="pinky prevent-select" id="Q">
+          <div class="letter_count">0</div>
+          <div class="keyboard_letter">Q</div>
+        </li>
+        <li class="pinky prevent-select" class="ring" id="W">
+          <div class="letter_count">0</div>
+          <div class="keyboard_letter">W</div>
+        </li>
+        <li class="pinky prevent-select" class="middle" id="E">
+          <div class="letter_count">0</div>
+          <div class="keyboard_letter">E</div>
+        </li>
+        <li class="pinky prevent-select" class="pointer1st" id="R">
+          <div class="letter_count">0</div>
+          <div class="keyboard_letter">R</div>
+        </li>
+        <li class="pinky prevent-select" class="pointer2nd" id="T">
+          <div class="letter_count">0</div>
+          <div class="keyboard_letter">T</div>
+        </li>
+        <li class="pinky prevent-select" class="pointer2nd" id="Y">
+          <div class="letter_count">0</div>
+          <div class="keyboard_letter">Y</div>
+        </li>
+        <li class="pinky prevent-select" class="pointer1st" id="U">
+          <div class="letter_count">0</div>
+          <div class="keyboard_letter">U</div>
+        </li>
+        <li class="pinky prevent-select" class="middle" id="I">
+          <div class="letter_count">0</div>
+          <div class="keyboard_letter">I</div>
+        </li>
+        <li class="pinky prevent-select" class="ring" id="O">
+          <div class="letter_count">0</div>
+          <div class="keyboard_letter">O</div>
+        </li>
+        <li class="pinky prevent-select" class="pinky" id="P">
+          <div class="letter_count">0</div>
+          <div class="keyboard_letter">P</div>
+        </li>
+        <!--     <li class="pinky" id="open_bracket">[</li>
+    <li class="pinky" id="close_bracket">]</li>
+    <li class="pinky" id="back_slash">\</li> -->
+      </ul>
+      <ul class="row row-2">
+        <li class="blank_space" id="caps"></li>
+        <li class="pinky prevent-select" class="pinky" id="A">
+          <div class="letter_count">0</div>
+          <div class="keyboard_letter">A</div>
+        </li>
+        <li class="pinky prevent-select" class="ring" id="S">
+          <div class="letter_count">0</div>
+          <div class="keyboard_letter">S</div>
+        </li>
+        <li class="pinky prevent-select" class="middle" id="D">
+          <div class="letter_count">0</div>
+          <div class="keyboard_letter">D</div>
+        </li>
+        <li class="pinky prevent-select" class="pointer1st" id="F">
+          <div class="letter_count">0</div>
+          <div class="keyboard_letter">F</div>
+        </li>
+        <li class="pinky prevent-select" class="pointer2nd" id="G">
+          <div class="letter_count">0</div>
+          <div class="keyboard_letter">G</div>
+        </li>
+        <li class="pinky prevent-select" class="pointer2nd" id="H">
+          <div class="letter_count">0</div>
+          <div class="keyboard_letter">H</div>
+        </li>
+        <li class="pinky prevent-select" class="pointer1st" id="J">
+          <div class="letter_count">0</div>
+          <div class="keyboard_letter">J</div>
+        </li>
+        <li class="pinky prevent-select" class="middle" id="K">
+          <div class="letter_count">0</div>
+          <div class="keyboard_letter">K</div>
+        </li>
+        <li class="pinky prevent-select" class="ring" id="L">
+          <div class="letter_count">0</div>
+          <div class="keyboard_letter">L</div>
+        </li>
+        <!--     <li class="pinky" id="colon">:</li> -->
+        <!--     <li class="pinky" id="quote" >''</li> -->
+        <!--     <li class="pinky" id="enter">ENTER</li> -->
+      </ul>
+      <ul class="row row-3">
+        <li class="pinky prevent-select" class="pinky" id="Submit">SUBMIT</li>
+        <li class="pinky prevent-select" class="pinky" id="Z">
+          <div class="letter_count">0</div>
+          <div class="keyboard_letter">Z</div>
+        </li>
+        <li class="pinky prevent-select" class="ring" id="X">
+          <div class="letter_count">0</div>
+          <div class="keyboard_letter">X</div>
+        </li>
+        <li class="pinky prevent-select" class="middle" id="C">
+          <div class="letter_count">0</div>
+          <div class="keyboard_letter">C</div>
+        </li>
+        <li class="pinky prevent-select" class="pointer1st" id="V">
+          <div class="letter_count">0</div>
+          <div class="keyboard_letter">V</div>
+        </li>
+        <li class="pinky prevent-select" class="pointer2nd" id="B">
+          <div class="letter_count">0</div>
+          <div class="keyboard_letter">B</div>
+        </li>
+        <li class="pinky prevent-select" class="pointer2nd" id="N">
+          <div class="letter_count">0</div>
+          <div class="keyboard_letter">N</div>
+        </li>
+        <li class="pinky prevent-select" class="pointer1st" id="M">
+          <div class="letter_count">0</div>
+          <div class="keyboard_letter">M</div>
+        </li>
+        <li class="pinky prevent-select" class="pinky" id="Delete">DELETE</li>
+      </ul>
+      <ul class="row row-4">
+        <li class="space" id="Space"></li>
+
+      </ul>
+    </div>
+  </div>
+
+  <script src="./script.js"></script>
+
+</body>
+
+</html>
