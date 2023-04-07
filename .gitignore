@@ -128,7 +128,7 @@ dmypy.json
 # Pyre type checker
 .pyre/
 
-old/
+/old
 .gcloudignore
 # .gitignore
 app.yaml
