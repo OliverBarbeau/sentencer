@@ -25,21 +25,27 @@
       <div id="score">0</div>
     </div>
   </div>
-</div>
-<div id="target_text_container">
-  <div id="target_text_display">
-    <div id="target_text">___ best ______ in ____ are free</div>
   </div>
-</div>
+  <div id="target_text_container">
+    <div id="target_text_display">
+      <div id="target_text">___ best ______ in ____ are free</div>
+    </div>
+  </div>
+  <div id="guess_history_container">
+    <div id="guess_history_display">
+      <div id="guess_history_list">
+        <div id="guess_history_list_item"> </div>
+      </div>
+    </div>
+  </div>
+
+
   <!-- partial:index.partial.html -->
   <div id="player_entry_text_container">
     <div id="player_entry_text_display"> </div>
 
-    </div>
-    <!-- the text input carat we want to appear to blink, 
-  doesn't work with line carries in the text display div yet -->
+  </div>
 
-    <!-- <div>|</div> -->
 
 
   <div id="keyboard_container">
@@ -173,7 +179,8 @@
       </ul>
     </div>
   </div>
-
+  <script src="./validate_and_score_guess.js"></script>
+  <script src="./target_display.js"></script>
   <script src="./script.js"></script>
 
 </body>
