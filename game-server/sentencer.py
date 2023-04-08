@@ -30,7 +30,6 @@ class Guesser:
         self.set_word_count()
         self.set_letter_count()
         self.dictionary = enchant.Dict("en_US")
-        self.dictionary.list_dicts()
 
     def choose_random_sentence(self, sentence_file_loc):
         # TODO: load sentences from a file
