@@ -1,28 +1,21 @@
-
-
-
-
-
 const keys = [..."ABCDEFGHIJKLMNOPQRSTUVWXYZ"];
 var player_entry_text_display_element = document.getElementById("player_entry_text_display");
 var player_entry_text = "";
 var player_state = {};
 var time_left = 60 * 20; // 20 minutes
 var entry_block = false;
-
+var target_sentence = "the best things in life are free";
 // a dictionary of characters and their counts
 // const initialCharacterPool = {"a": 1, "b": 1, "c": 1, "d": 1, "e": 1, "f": 1, "g": 1, "h": 1, "i": 1, "j": 1, "k": 1, "l": 1, "m": 1, "n": 1, "o": 1, "p": 1, "q": 1, "r": 1, "s": 1, "t": 1, "u": 1, "v": 1, "w": 1, "x": 1, "y": 1, "z": 1, " ": 1}
 // const initialCharacterPool = {"e": 1, "f": 1, "g": 1, "h": 1, "i": 1, "j": 1, "k": 1, "l": 1, "m": 1, "n": 1, "o": 1, "p": 1, "q": 1, "r": 1, "s": 1, "t": 1, "u": 1, "v": 1, "w": 1, "x": 1, "y": 1, "z": 1, " ": 1}
 // const initialCharacterPool = { a: 0, b: 0, c: 0, d: 5, e: 1, f: 1, g: 1, h: 1, i: 1, j: 1, k: 1, l: 1, m: 1, n: 1, o: 1, p: 1, q: 1, r: 1, s: 1, t: 0, u: 0, v: 0, w: 0, x: 0, y: 0, z: 0 }
-const initialCharacterPool = { a: 100, b: 1, c: 0, d:0, e: 6, f: 2, g: 1, h: 2, i: 3, j: 0, k: 0, l: 1, m: 0, n: 2, o: 0, p: 0, q: 0, r: 2, s: 2, t: 3, u: 0, v: 0, w: 0, x: 0, y: 0, z: 0 }
+const initialCharacterPool = { a: 100, b: 1, c: 0, d: 0, e: 6, f: 2, g: 1, h: 2, i: 3, j: 0, k: 0, l: 1, m: 0, n: 2, o: 0, p: 0, q: 0, r: 2, s: 2, t: 3, u: 0, v: 0, w: 0, x: 0, y: 0, z: 0 }
 
 var character_pool = Object.assign({}, initialCharacterPool);
 
 // enabled_key_color = rgb(97, 135, 97);
 const enabled_key_color = "#F5E28B";
 const disabled_key_color = "#736E5D";
-
-
 
 //       <li class="ring" id="X">
 /* <div class="letter_count">0</div>
@@ -37,9 +30,6 @@ const disabled_key_color = "#736E5D";
 <div class="keyboard_letter">V</div>
 </li> */
 
-
-
-
 function update_key_count(key) {
   document.getElementById(key).getElementsByClassName("letter_count")[0].innerHTML = character_pool[key.toLowerCase()];
 }
@@ -49,7 +39,6 @@ function reset_key_counts() {
     update_key_count(key.toUpperCase());
   }
 }
-
 
 function apply_key_color(key) {
   if (character_pool[key.toLowerCase()] > 0) {
@@ -104,10 +93,11 @@ function applyKey(key) {
       //    c. the player's remaining 
       
       // reset the guess text entry and keyboard colors
-      player_entry_text = "";
+      document.getElementById("score").innerHTML = validate_guess(player_entry_text.toLowerCase());
       character_pool = Object.assign({}, initialCharacterPool);
       reset_key_colors();
       reset_key_counts();
+      player_entry_text = "";
       break;
     
     case "Space":
@@ -131,15 +121,12 @@ function applyKey(key) {
         player_entry_text += key;
         apply_key_color(key.toUpperCase());
         update_key_count(key.toUpperCase());
-
       }
       break;
   }
   console.log(player_entry_text);
   document.getElementById("player_entry_text_display").innerHTML = player_entry_text.toLowerCase();
 }
-
-
 
 function start_timer() {
   var timer = setInterval(function () {
@@ -153,10 +140,38 @@ function start_timer() {
       clearInterval(timer);
       document.getElementById("timer").innerHTML = "0:00";
     }
-  }, 1000);
+  }, 1000);  
 }
 
 
+player_entry_text_display_element = document.getElementById("player_entry_text_display");
+function validate_guess(guess) { 
+  console.log(guess);
+  var guess_words = guess.split(" ");
+  console.log(guess_words);
+  if (guess_words.length < 3) {
+    return "not enough words";
+  }
+  if (guess == target_sentence) {
+    return "You win!";
+  } else {
+    var res = "correct words: ";
+    var correct_count = 0;
+    var target_sentence_words = target_sentence.split(" ");
+    for (var i = 0; i < target_sentence_words.length; i++) {
+      if (guess_words.includes(target_sentence_words[i])) {
+        res += target_sentence_words[i] + " ";
+        correct_count += 1;
+      } else {
+        res += "____ ";
+      }
+    }
+    if (correct_count == 0) {
+      return "no correct words";
+    }
+    return res;
+  }
+}
 
 document.getElementById('start-button').addEventListener('click', function() {
   document.getElementById('start_button_container').style.display = 'none';
@@ -170,19 +185,16 @@ window.addEventListener('load', function () {
   // get_game_state();
   // get_character_pool();
   // get_player_state();
-
 });
-
 
 const command_keys = ["Control", "Alt", "Shift", "Meta"];
 
-
 // click and keydown both apply the key but under different circumstances
 // var entry_block = false;
-
-
+var last_key_pressed = null;
 
 document.addEventListener("keydown", ({ key }) => {
+  last_key_pressed = key;
   if (entry_block) {
     return;
   }
@@ -192,6 +204,9 @@ document.addEventListener("keydown", ({ key }) => {
   var keyElement = null;
   switch (key) {
     case "Backspace":
+      if (last_key_pressed == "submit") {
+        character_pool = Object.assign({}, initialCharacterPool);
+      }
       keyElementID = "Delete"
       console.log("Key is Backspace")
       break;
@@ -202,6 +217,7 @@ document.addEventListener("keydown", ({ key }) => {
       break;
     case "Enter":
       keyElementID = "Submit"
+      last_key_pressed = keyElementID;
       console.log("Key is Enter")
       break;
     default:
@@ -234,7 +250,6 @@ document.addEventListener("keydown", ({ key }) => {
     applyKey(keyElementID);
 })
 
-
 // keyup event for when the user is holding down a command key, 
 // we need to wait for the keyup event to apply the key
 // the keyup will listen for command keys listed in the command_keys array
@@ -244,9 +259,6 @@ document.addEventListener("keyup", ({ key }) => {
     entry_block = false;
   }
 })
-
-
-
 
 keys.push("Delete");
 keys.push("Submit");
@@ -272,6 +284,10 @@ space_keyElement.addEventListener("click", () => {
   })
   applyKey("Space");
 })
+
+
+
+
 // document.addEventListener("click", ({ key }) => {   
 //   console.log(key)
   
@@ -280,14 +296,6 @@ space_keyElement.addEventListener("click", () => {
 //     keyElement.classList.remove("hit")
 //   })
 // })
-
-
-
-
-
-
-
-
 
 
 // targetRandomKey();
