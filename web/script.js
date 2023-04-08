@@ -143,8 +143,6 @@ function start_timer() {
   }, 1000);  
 }
 
-
-player_entry_text_display_element = document.getElementById("player_entry_text_display");
 function validate_guess(guess) { 
   console.log(guess);
   var guess_words = guess.split(" ");
