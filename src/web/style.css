@@ -35,9 +35,22 @@ body {
   font-size: 1.8em;
 }
 
+#target_text_container {
+  justify-content: center;
+  align-items: center;
+  border: black solid 0.1em;
+  background-color: #736E5D;
+  position: absolute;
+  top: 0;
+}
 
-
-
+#target_text_display {
+  /* margin-bottom: 1em; */
+  /* font-size: 4em; */
+  font-size: large;
+  position: relative;
+  color: rgb(246, 240, 215);
+}
 #player_entry_text_container {
   color: black;
   display: flex;

@@ -5,6 +5,9 @@ var player_state = {};
 var time_left = 60 * 20; // 20 minutes
 var entry_block = false;
 var target_sentence = "the best things in life are free";
+var obscured_target_sentence_array = [];
+var known_words = [];
+var keyboard_active = false;
 // a dictionary of characters and their counts
 // const initialCharacterPool = {"a": 1, "b": 1, "c": 1, "d": 1, "e": 1, "f": 1, "g": 1, "h": 1, "i": 1, "j": 1, "k": 1, "l": 1, "m": 1, "n": 1, "o": 1, "p": 1, "q": 1, "r": 1, "s": 1, "t": 1, "u": 1, "v": 1, "w": 1, "x": 1, "y": 1, "z": 1, " ": 1}
 // const initialCharacterPool = {"e": 1, "f": 1, "g": 1, "h": 1, "i": 1, "j": 1, "k": 1, "l": 1, "m": 1, "n": 1, "o": 1, "p": 1, "q": 1, "r": 1, "s": 1, "t": 1, "u": 1, "v": 1, "w": 1, "x": 1, "y": 1, "z": 1, " ": 1}
@@ -46,11 +49,10 @@ function apply_key_color(key) {
     document.getElementById(key).style.backgroundColor = enabled_key_color;
     document.getElementById(key).style.border = "2px solid #A89F77";
     // change the key color to grey
-  } else {  
+  } else {
     document.getElementById(key).classList.remove("enabled");
     document.getElementById(key).style.backgroundColor = disabled_key_color;
     document.getElementById(key).style.border = "2px solid #968F74";
-
   }
 }
 
@@ -80,7 +82,7 @@ function applyKey(key) {
       player_entry_text = player_entry_text.slice(0, -1);
 
       break;
-    
+
     case "Submit":
       // send the guess to the game server for validation
       // retrieve the result of the guess:
@@ -91,7 +93,7 @@ function applyKey(key) {
       //    a. the player's total score
       //    b. the player's found words
       //    c. the player's remaining 
-      
+
       // reset the guess text entry and keyboard colors
       document.getElementById("score").innerHTML = validate_guess(player_entry_text.toLowerCase());
       character_pool = Object.assign({}, initialCharacterPool);
@@ -99,13 +101,13 @@ function applyKey(key) {
       reset_key_counts();
       player_entry_text = "";
       break;
-    
+
     case "Space":
       if (player_entry_text.length > 0 && player_entry_text[player_entry_text.length - 1] !== " ") { // don't add a space if the last character is already a space
         player_entry_text += " ";
       }
       break;
-    
+
     default:
       // if the length of the player entry text is too long, lets just not add the key
       if (player_entry_text.length >= 50) {
@@ -128,55 +130,6 @@ function applyKey(key) {
   document.getElementById("player_entry_text_display").innerHTML = player_entry_text.toLowerCase();
 }
 
-function start_timer() {
-  var timer = setInterval(function () {
-    var minutes = Math.floor(time_left / 60);
-    var seconds = time_left - minutes * 60;
-    seconds = seconds < 10 ? "0" + seconds : seconds;
-    minutes = minutes < 10 ? "0" + minutes : minutes;
-    document.getElementById("timer").innerHTML = minutes + ":" + seconds;
-    time_left -= 1;
-    if (time_left < 0) {
-      clearInterval(timer);
-      document.getElementById("timer").innerHTML = "0:00";
-    }
-  }, 1000);  
-}
-
-
-player_entry_text_display_element = document.getElementById("player_entry_text_display");
-function validate_guess(guess) { 
-  console.log(guess);
-  var guess_words = guess.split(" ");
-  console.log(guess_words);
-  if (guess_words.length < 3) {
-    return "not enough words";
-  }
-  if (guess == target_sentence) {
-    return "You win!";
-  } else {
-    var res = "correct words: ";
-    var correct_count = 0;
-    var target_sentence_words = target_sentence.split(" ");
-    for (var i = 0; i < target_sentence_words.length; i++) {
-      if (guess_words.includes(target_sentence_words[i])) {
-        res += target_sentence_words[i] + " ";
-        correct_count += 1;
-      } else {
-        res += "____ ";
-      }
-    }
-    if (correct_count == 0) {
-      return "no correct words";
-    }
-    return res;
-  }
-}
-
-document.getElementById('start-button').addEventListener('click', function() {
-  document.getElementById('start_button_container').style.display = 'none';
-  start_timer();
-});
 
 window.addEventListener('load', function () {
   reset_key_counts();
@@ -198,7 +151,7 @@ document.addEventListener("keydown", ({ key }) => {
   if (entry_block) {
     return;
   }
-  
+
   console.log(key)
   var keyElementID = null;
   var keyElement = null;
@@ -237,17 +190,17 @@ document.addEventListener("keydown", ({ key }) => {
         return;
       }
       break;
-    }
-    // is the key alpha ? a-z, A-Z
-    
-    keyElement = document.getElementById(keyElementID);
-    
-    
-    keyElement.classList.add("hit")
-    keyElement.addEventListener('animationend', () => {
-      keyElement.classList.remove("hit")
-    })
-    applyKey(keyElementID);
+  }
+  // is the key alpha ? a-z, A-Z
+
+  keyElement = document.getElementById(keyElementID);
+
+
+  keyElement.classList.add("hit")
+  keyElement.addEventListener('animationend', () => {
+    keyElement.classList.remove("hit")
+  })
+  applyKey(keyElementID);
 })
 
 // keyup event for when the user is holding down a command key, 
@@ -288,9 +241,9 @@ space_keyElement.addEventListener("click", () => {
 
 
 
-// document.addEventListener("click", ({ key }) => {   
+// document.addEventListener("click", ({ key }) => {
 //   console.log(key)
-  
+
 //   keyElement.classList.add("hit")
 //   keyElement.addEventListener('animationend', () => {
 //     keyElement.classList.remove("hit")
@@ -300,10 +253,32 @@ space_keyElement.addEventListener("click", () => {
 
 // targetRandomKey();
 
-  // if (keyPressed === highlightedKey.innerHTML) {
-  //   timestamps.unshift(getTimestamp());
-  //   const elapsedTime = timestamps[0] - timestamps[1];
-  //   console.log(`Character per minute ${60/elapsedTime}`)
-  //   highlightedKey.classList.remove("selected");
-  //   targetRandomKey();
-  // }
+// if (keyPressed === highlightedKey.innerHTML) {
+//   timestamps.unshift(getTimestamp());
+//   const elapsedTime = timestamps[0] - timestamps[1];
+//   console.log(`Character per minute ${60/elapsedTime}`)
+//   highlightedKey.classList.remove("selected");
+//   targetRandomKey();
+// }
+
+function start_timer() {
+  var timer = setInterval(function () {
+    var minutes = Math.floor(time_left / 60);
+    var seconds = time_left - minutes * 60;
+    seconds = seconds < 10 ? "0" + seconds : seconds;
+    minutes = minutes < 10 ? "0" + minutes : minutes;
+    document.getElementById("timer").innerHTML = minutes + ":" + seconds;
+    time_left -= 1;
+    if (time_left < 0) {
+      clearInterval(timer);
+      document.getElementById("timer").innerHTML = "0:00";
+    }
+  }, 1000);
+}
+
+
+document.getElementById('start-button').addEventListener('click', function () {
+  document.getElementById('start_button_container').style.display = 'none';
+  start_timer();
+  keyboard_active = true;
+});
