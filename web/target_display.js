@@ -7,6 +7,7 @@ var current_target_sentence = target_sentence;
 var current_obscured_target_sentence_array = obscured_target_sentence_array;
 var current_known_words = known_words;
 
+
 function update_target_sentence_display() {
     var target_sentence_display = document.getElementById("target_sentence_display");
     var target_sentence_display_text = "";
@@ -16,7 +17,8 @@ function update_target_sentence_display() {
     target_sentence_display.innerHTML = target_sentence_display_text;
 }
 
-function build_obscured_target_sentence_array() {
+
+function build_obscured_target_sentence_array() { // found words are shown, unfound words are blanked out
     var new_obscured_target_sentence_array = [];
     var target_sentence_words = current_target_sentence.split(" ");
     for (var i = 0; i < target_sentence_words.length; i++) {
