@@ -3,7 +3,7 @@ var player_entry_text_display_element = document.getElementById("player_entry_te
 var player_entry_text = "";
 var player_state = {};
 var time_left = 60 * 20; // 20 minutes
-var entry_block = false;
+var entry_block = true;
 var target_sentence = "the best things in life are free";
 var obscured_target_sentence_array = [];
 var known_words = [];
@@ -16,22 +16,9 @@ const initialCharacterPool = { a: 100, b: 1, c: 0, d: 0, e: 6, f: 2, g: 1, h: 2,
 
 var character_pool = Object.assign({}, initialCharacterPool);
 
-// enabled_key_color = rgb(97, 135, 97);
 const enabled_key_color = "#F5E28B";
 const disabled_key_color = "#736E5D";
 
-//       <li class="ring" id="X">
-/* <div class="letter_count">0</div>
-<div class="keyboard_letter">X</div>
-</li>
-<li class="middle" id="C">
-<div class="letter_count">0</div>
-<div class="keyboard_letter">C</div>
-</li>
-<li class="pointer1st" id="V">
-<div class="letter_count">0</div>
-<div class="keyboard_letter">V</div>
-</li> */
 
 function update_key_count(key) {
   document.getElementById(key).getElementsByClassName("letter_count")[0].innerHTML = character_pool[key.toLowerCase()];
@@ -61,7 +48,6 @@ function reset_key_colors() {
     apply_key_color(key.toUpperCase());
   }
 }
-reset_key_colors();
 
 function applyKey(key) {
   console.log(key);
@@ -99,6 +85,8 @@ function applyKey(key) {
       character_pool = Object.assign({}, initialCharacterPool);
       reset_key_colors();
       reset_key_counts();
+      obscured_target_sentence_array = build_obscured_target_sentence_array();
+      update_target_sentence_display(obscured_target_sentence_array);
       player_entry_text = "";
       break;
 
@@ -131,9 +119,40 @@ function applyKey(key) {
 }
 
 
+
+function update_target_sentence_display(obscured_array) {
+  var target_text = document.getElementById("target_text");
+  var target_sentence_display_text = "";
+  for (var i = 0; i < obscured_array.length; i++) {
+    target_sentence_display_text += obscured_array[i] + " ";
+  }
+  target_text.innerHTML = target_sentence_display_text;
+
+}
+
+function build_obscured_target_sentence_array() {
+  var new_obscured_target_sentence_array = [];
+  var target_sentence_words = target_sentence.split(" ");
+  for (var i = 0; i < target_sentence_words.length; i++) {
+    if (known_words.includes(target_sentence_words[i].toLowerCase())) {
+      new_obscured_target_sentence_array.push(target_sentence_words[i]);
+    } else {
+      // number of underscores is equal to the length of the word
+      var underscores = "";
+      for (var j = 0; j < target_sentence_words[i].length; j++) {
+        underscores += "_";
+      }
+      new_obscured_target_sentence_array.push(underscores);
+    }
+  }
+  return new_obscured_target_sentence_array;
+}
+
 window.addEventListener('load', function () {
   reset_key_counts();
   reset_key_colors();
+  obscured_target_sentence_array = build_obscured_target_sentence_array();
+  update_target_sentence_display(obscured_target_sentence_array);
   // user_identifier = get_user_identifier();
   // get_game_state();
   // get_character_pool();
@@ -241,6 +260,39 @@ space_keyElement.addEventListener("click", () => {
 
 
 
+function validate_guess(guess) {
+  console.log(guess);
+  var guess_words = guess.split(" ");
+  console.log(guess_words);
+  if (guess_words.length < 3) {
+    return "not enough words";
+  }
+  if (guess == target_sentence) {
+    return "You win!";
+  } else {
+    var res = "correct words: ";
+    var correct_count = 0;
+    var target_sentence_words = target_sentence.split(" ");
+    for (var i = 0; i < target_sentence_words.length; i++) {
+      if (guess_words.includes(target_sentence_words[i])) {
+        res += target_sentence_words[i] + " ";
+        correct_count += 1;
+        if (!known_words.includes(target_sentence_words[i])) {
+          known_words.push(target_sentence_words[i]);
+        }
+        console.log(known_words);
+      } else {
+        res += ",";
+      }
+    }
+    if (correct_count == 0) {
+      return "no correct words";
+    }
+    return res;
+  }
+}
+
+
 // document.addEventListener("click", ({ key }) => {
 //   console.log(key)
 
@@ -280,5 +332,5 @@ function start_timer() {
 document.getElementById('start-button').addEventListener('click', function () {
   document.getElementById('start_button_container').style.display = 'none';
   start_timer();
-  keyboard_active = true;
+  game_started = true;
 });
