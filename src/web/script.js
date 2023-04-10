@@ -7,7 +7,7 @@ var entry_block = true;
 var target_sentence = "the best things in life are free";
 var obscured_target_sentence_array = [];
 var known_words = [];
-var keyboard_active = false;
+var game_started = false;
 // a dictionary of characters and their counts
 // const initialCharacterPool = {"a": 1, "b": 1, "c": 1, "d": 1, "e": 1, "f": 1, "g": 1, "h": 1, "i": 1, "j": 1, "k": 1, "l": 1, "m": 1, "n": 1, "o": 1, "p": 1, "q": 1, "r": 1, "s": 1, "t": 1, "u": 1, "v": 1, "w": 1, "x": 1, "y": 1, "z": 1, " ": 1}
 // const initialCharacterPool = {"e": 1, "f": 1, "g": 1, "h": 1, "i": 1, "j": 1, "k": 1, "l": 1, "m": 1, "n": 1, "o": 1, "p": 1, "q": 1, "r": 1, "s": 1, "t": 1, "u": 1, "v": 1, "w": 1, "x": 1, "y": 1, "z": 1, " ": 1}
@@ -19,6 +19,32 @@ var character_pool = Object.assign({}, initialCharacterPool);
 const enabled_key_color = "#F5E28B";
 const disabled_key_color = "#736E5D";
 
+function update_target_sentence_display(obscured_array) {
+  var target_text = document.getElementById("target_text");
+  var target_sentence_display_text = "";
+  for (var i = 0; i < obscured_array.length; i++) {
+    target_sentence_display_text += obscured_array[i] + " ";
+  }
+  target_text.innerHTML = target_sentence_display_text;
+}
+
+function build_obscured_target_sentence_array() {
+  var new_obscured_target_sentence_array = [];
+  var target_sentence_words = target_sentence.split(" ");
+  for (var i = 0; i < target_sentence_words.length; i++) {
+    if (known_words.includes(target_sentence_words[i].toLowerCase())) {
+      new_obscured_target_sentence_array.push(target_sentence_words[i]);
+    } else {
+      // number of underscores is equal to the length of the word
+      var underscores = "";
+      for (var j = 0; j < target_sentence_words[i].length; j++) {
+        underscores += "_";
+      }
+      new_obscured_target_sentence_array.push(underscores);
+    }
+  }
+  return new_obscured_target_sentence_array;
+}
 
 function update_key_count(key) {
   document.getElementById(key).getElementsByClassName("letter_count")[0].innerHTML = character_pool[key.toLowerCase()];
@@ -51,6 +77,7 @@ function reset_key_colors() {
 
 function applyKey(key) {
   console.log(key);
+
   switch (key) {
     case "Delete":
       if (player_entry_text.length < 1) {
@@ -81,6 +108,8 @@ function applyKey(key) {
       //    c. the player's remaining 
 
       // reset the guess text entry and keyboard colors
+      document.getElementById('start_button_container').style.display = 'none';
+
       document.getElementById("score").innerHTML = validate_guess(player_entry_text.toLowerCase());
       character_pool = Object.assign({}, initialCharacterPool);
       reset_key_colors();
@@ -120,34 +149,6 @@ function applyKey(key) {
 
 
 
-function update_target_sentence_display(obscured_array) {
-  var target_text = document.getElementById("target_text");
-  var target_sentence_display_text = "";
-  for (var i = 0; i < obscured_array.length; i++) {
-    target_sentence_display_text += obscured_array[i] + " ";
-  }
-  target_text.innerHTML = target_sentence_display_text;
-
-}
-
-function build_obscured_target_sentence_array() {
-  var new_obscured_target_sentence_array = [];
-  var target_sentence_words = target_sentence.split(" ");
-  for (var i = 0; i < target_sentence_words.length; i++) {
-    if (known_words.includes(target_sentence_words[i].toLowerCase())) {
-      new_obscured_target_sentence_array.push(target_sentence_words[i]);
-    } else {
-      // number of underscores is equal to the length of the word
-      var underscores = "";
-      for (var j = 0; j < target_sentence_words[i].length; j++) {
-        underscores += "_";
-      }
-      new_obscured_target_sentence_array.push(underscores);
-    }
-  }
-  return new_obscured_target_sentence_array;
-}
-
 window.addEventListener('load', function () {
   reset_key_counts();
   reset_key_colors();
@@ -175,6 +176,14 @@ document.addEventListener("keydown", ({ key }) => {
   var keyElementID = null;
   var keyElement = null;
   switch (key) {
+    case "Enter":
+      keyElementID = "Submit"
+      last_key_pressed = keyElementID;
+      if (!game_started) {
+        start_game();
+      }
+      console.log("Key is Enter")
+      break;
     case "Backspace":
       if (last_key_pressed == "submit") {
         character_pool = Object.assign({}, initialCharacterPool);
@@ -185,12 +194,9 @@ document.addEventListener("keydown", ({ key }) => {
     case " ":
       console.log("Key is Space")
       keyElementID = "Space"
-      // applyKey("Space");
-      break;
-    case "Enter":
-      keyElementID = "Submit"
-      last_key_pressed = keyElementID;
-      console.log("Key is Enter")
+      if (!game_started) {
+        start_game();
+      }
       break;
     default:
       if (key.match(/^[a-z]$/i)) {
@@ -202,7 +208,6 @@ document.addEventListener("keydown", ({ key }) => {
         // if it is a command key like ctrl, alt, shift, etc. then 
         // turn on the entry block so that the keydown event doesn't
         // apply keys until the keyup event is triggered
-
         if (command_keys.includes(key)) {
           entry_block = true;
         }
@@ -214,7 +219,9 @@ document.addEventListener("keydown", ({ key }) => {
 
   keyElement = document.getElementById(keyElementID);
 
-
+  if (game_started == false) {
+    return;
+  }
   keyElement.classList.add("hit")
   keyElement.addEventListener('animationend', () => {
     keyElement.classList.remove("hit")
@@ -254,13 +261,19 @@ space_keyElement.addEventListener("click", () => {
   space_keyElement.addEventListener('animationend', () => {
     space_keyElement.classList.remove("hit")
   })
-  applyKey("Space");
+  if (!game_started) {
+    start_game();
+  }
+  else { applyKey("Space"); }
 })
 
 
 
 
 function validate_guess(guess) {
+  var res = "correct words: ";
+  var correct_count = 0;
+  var target_sentence_words = target_sentence.split(" ");
   console.log(guess);
   var guess_words = guess.split(" ");
   console.log(guess_words);
@@ -268,11 +281,13 @@ function validate_guess(guess) {
     return "not enough words";
   }
   if (guess == target_sentence) {
+    for (var i = 0; i < target_sentence_words.length; i++) {
+      if (!known_words.includes(target_sentence_words[i])) {
+        known_words.push(target_sentence_words[i]);
+      }
+    }
     return "You win!";
   } else {
-    var res = "correct words: ";
-    var correct_count = 0;
-    var target_sentence_words = target_sentence.split(" ");
     for (var i = 0; i < target_sentence_words.length; i++) {
       if (guess_words.includes(target_sentence_words[i])) {
         res += target_sentence_words[i] + " ";
@@ -328,9 +343,14 @@ function start_timer() {
   }, 1000);
 }
 
+// listen for the start button to be clicked
 
 document.getElementById('start-button').addEventListener('click', function () {
+  start_game();
+});
+
+function start_game() {
   document.getElementById('start_button_container').style.display = 'none';
   start_timer();
   game_started = true;
-});
+}
