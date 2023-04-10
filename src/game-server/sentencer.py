@@ -3,7 +3,8 @@ import re
 import subprocess
 import player_state
 from string_combination_hash import combined_hash
-
+import enchant
+enchant.dict_exists("en_US")
 
 def input_parse(input):
     # parse input into a list of words
@@ -28,6 +29,7 @@ class Guesser:
         self.letter_count = 0
         self.set_word_count()
         self.set_letter_count()
+        self.dictionary = enchant.Dict("en_US")
 
     def choose_random_sentence(self, sentence_file_loc):
         # TODO: load sentences from a file
@@ -109,37 +111,12 @@ class Guesser:
         # spellcheck, any incorrectly spelled word will invalidate the guess
         # I think we need to filter more words out from being correct english words
 
-        cmd = "hunspell -a -d en_US\n"
-        # send the cmd to the hunspell process
-        p = subprocess.Popen(cmd, shell=True, stdin=subprocess.PIPE,
-                             stdout=subprocess.PIPE, stderr=subprocess.STDOUT)
-
-        guess_sentence = ""
         for word in guess_word_list:
-            guess_sentence += " " + word
-        # print("guess_sentence: " + guess_sentence)
-        # send the sentence to the hunspell process
-        output = p.communicate(input=guess_sentence.encode("utf-8"))
-        output_lines = output[0].decode("utf-8").split("\n")
-        output_lines = output_lines[1:-2]
-        if len(output_lines) != guess_word_count:
-            validity_complaint = "error: output lines from hunspell - length does not match guess_word_count"
-            print(
-                "error: output lines from hunspell - length does not match guess_word_count")
-
-            Exception(
-                "error: output lines from hunspell - length does not match guess_word_count")
-            return None, None, validity_complaint
-
-        for line in output_lines:
-            # print("line: " + line)
-            if line[0] != "*" and line[0] != "+":
-                validity_complaint = "not a valid word, here are some suggestions: " + line
+            if self.dictionary.check(word) is False:
+                validity_complaint = "Guess contains an invalid word: " + word
                 return None, None, validity_complaint
 
         # if we got here the sentence has valid spelling, outside of grammar
-
-        retval = p.wait()
 
         # now lets check for grammar??
         # TODO: check for grammar and add a score penalty for grammar errors
