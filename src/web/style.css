@@ -51,6 +51,7 @@ body {
   position: relative;
   color: rgb(246, 240, 215);
 }
+
 #player_entry_text_container {
   color: black;
   display: flex;
@@ -95,7 +96,8 @@ body {
   /* border: 1px solid black; */
   background-color: #736E5D;
   /* border: 2px solid blue; */
-  position: absolute; /* Add this line */
+  position: absolute;
+  /* Add this line */
   top: 0;
   left: 0;
   width: 100%;
@@ -234,24 +236,24 @@ li {
   animation: hit_space 0.3s cubic-bezier(0.1, 0.1, 0.1, 1.000) both;
 } */
 
-@keyframes blink {
-  50% {
-    opacity: 0;
-  }
-}
 
 @-webkit-keyframes hit {
   0% {
     -webkit-transform: scale(1.2);
     transform: scale(1.2);
   }
-
+  
   100% {
     -webkit-transform: scale(1);
     transform: scale(1);
   }
 }
 
+@keyframes blink {
+  50% {
+    opacity: 0;
+  }
+}
 @keyframes hit {
   0% {
     -webkit-transform: scale(1.2);
