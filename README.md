@@ -7,3 +7,5 @@ This repo was a scratch repo that was used as the initial web implementation of 
 
 
 
+
+This project is depreciated and was converted to a modern webstack (T3.)
